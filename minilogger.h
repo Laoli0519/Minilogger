@@ -2,12 +2,13 @@
 //Requires C++11 standard and above
 
 
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef __MINI_LOGGER_H__
+#define __MINI_LOGGER_H__
 #include <string>
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <share.h>
 #include <initializer_list>
 // ============================================================
 //  get system time 
@@ -51,7 +52,8 @@ namespace MiniLog {
 	const uint16_t log_level_warning = 4;
 	const uint16_t log_level_error = 8;
 	const uint16_t log_level_fatal = 16;
-
+	class Logger;
+	typedef std::shared_ptr<MiniLog::Logger> shared;
 	// ============================================================
 	// New Logger with a new log file and new log title
 	// ============================================================
@@ -64,12 +66,11 @@ namespace MiniLog {
 			Logger(const std::string p_username, 
 				const uint16_t log_level = MiniLog::log_level_debug); 
 
+			//Logger(const MiniLog::Logger& log);
+
 			~Logger();
 
 		public:
-
-			void set_log_level(const uint16_t level);
-
 			template <typename T>
 			void log(const T& fmt) ;
 
@@ -289,6 +290,26 @@ namespace MiniLog {
 	inline void Logger::flush() {
 		m_out_stream.flush();
 	}
+
+	//Logger::Logger(const Logger& log): 
+	//	m_log_level(log.m_log_level),
+	//	m_username(log.m_username),
+	//	m_out_stream(log.m_out_stream.rdbuf()) {
+	//	auto log_thiz = const_cast<MiniLog::Logger*>(&log);
+	//	m_logfile.swap(log_thiz->m_logfile);
+	//}
+
+	MiniLog::shared GetLog(const std::string filename, const std::string logname, const uint16_t log_level) {
+		//MiniLog::Logger *log = new MiniLog::Logger(filename, logname, log_level);
+
+		return std::make_shared<MiniLog::Logger>(filename, logname, log_level);
+	}
+
+	MiniLog::shared GetLog(const std::string logname, const uint16_t log_level) {
+		//MiniLog::Logger *log = new MiniLog::Logger(logname, log_level);
+
+		return std::make_shared<MiniLog::Logger>(logname, log_level);
+	}
 }
 
-#endif
+#endif //__MINI_LOGGER_H__
