@@ -8,7 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <share.h>
+#include <memory>
 #include <initializer_list>
 // ============================================================
 //  get system time 
