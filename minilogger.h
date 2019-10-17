@@ -47,11 +47,14 @@ static std::string DateTimeStamp()
 }
 
 namespace MiniLog {
-	const uint16_t log_level_debug = 1;
-	const uint16_t log_level_info = 2;
-	const uint16_t log_level_warning = 4;
-	const uint16_t log_level_error = 8;
-	const uint16_t log_level_fatal = 16;
+	enum LogLevel{
+		log_level_debug = 1,
+		log_level_info = 2,
+		log_level_warning = 4,
+		log_level_error = 8,
+		log_level_fatal = 16
+	};
+
 	class Logger;
 	typedef std::shared_ptr<MiniLog::Logger> shared;
 	// ============================================================
@@ -61,10 +64,10 @@ namespace MiniLog {
 		public:
 			Logger(const std::string p_filename,
 				const std::string p_username,
-				const uint16_t log_level = MiniLog::log_level_debug); 
+				const LogLevel log_level = MiniLog::log_level_debug); 
 			
 			Logger(const std::string p_username, 
-				const uint16_t log_level = MiniLog::log_level_debug); 
+				const LogLevel log_level = MiniLog::log_level_debug); 
 
 			//Logger(const MiniLog::Logger& log);
 
@@ -108,12 +111,14 @@ namespace MiniLog {
 			void fatal(const T & fmt);
 
 			void flush();
+
+			void setLogLevel(const LogLevel level);
 		private:
-			bool should_log(const uint16_t level);
+			bool should_log(const LogLevel level);
 
 		protected:
 			std::ofstream 		m_logfile;
-			const uint16_t 		m_log_level;
+			LogLevel 			m_log_level;
 			const std::string 	m_username;
 			std::ostream		m_out_stream;
 	};
@@ -121,7 +126,7 @@ namespace MiniLog {
 	
 	Logger::Logger(const std::string p_filename,
 		const std::string p_username,
-		const uint16_t log_level):
+		const LogLevel log_level):
 			m_log_level(log_level), 
 			m_username(p_username), 
 			m_out_stream(std::cout.rdbuf()) {
@@ -142,7 +147,7 @@ namespace MiniLog {
 		m_out_stream.rdbuf(buf);
 	}
 
-	Logger::Logger(const std::string p_username, const uint16_t log_level):
+	Logger::Logger(const std::string p_username, const LogLevel log_level):
 			m_log_level(log_level),
 			m_username(p_username),
 			m_out_stream(std::cout.rdbuf()) {}
@@ -153,7 +158,7 @@ namespace MiniLog {
 		}
 	}
 
-	inline bool Logger::should_log(const uint16_t level) {
+	inline bool Logger::should_log(const LogLevel level) {
 		return level >= m_log_level;	
 	}
 
@@ -299,13 +304,13 @@ namespace MiniLog {
 	//	m_logfile.swap(log_thiz->m_logfile);
 	//}
 
-	MiniLog::shared GetLog(const std::string filename, const std::string logname, const uint16_t log_level) {
+	MiniLog::shared GetLog(const std::string filename, const std::string logname, const LogLevel log_level) {
 		//MiniLog::Logger *log = new MiniLog::Logger(filename, logname, log_level);
 
 		return std::make_shared<MiniLog::Logger>(filename, logname, log_level);
 	}
 
-	MiniLog::shared GetLog(const std::string logname, const uint16_t log_level) {
+	MiniLog::shared GetLog(const std::string logname, const LogLevel log_level) {
 		//MiniLog::Logger *log = new MiniLog::Logger(logname, log_level);
 
 		return std::make_shared<MiniLog::Logger>(logname, log_level);
