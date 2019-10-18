@@ -110,11 +110,11 @@ namespace MiniLog {
 			template<typename T>
 			void fatal(const T & fmt);
 
-			void flush();
+			inline void flush();
 
-			void setLogLevel(const LogLevel level);
+			inline void setLogLevel(const LogLevel level);
 		private:
-			bool should_log(const LogLevel level);
+			inline bool should_log(const LogLevel level);
 
 		protected:
 			std::ofstream 		m_logfile;
@@ -296,6 +296,9 @@ namespace MiniLog {
 		m_out_stream.flush();
 	}
 
+	inline void Logger::setLogLevel(const LogLevel level) {
+		m_log_level = level;
+	}
 	//Logger::Logger(const Logger& log): 
 	//	m_log_level(log.m_log_level),
 	//	m_username(log.m_username),
